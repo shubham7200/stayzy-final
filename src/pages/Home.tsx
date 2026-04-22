@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Clock, Mail, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import heroHostelImage from "@/assets/hero-hostel.jpg";
 
 interface Hostel {
   id: string;
@@ -182,26 +183,37 @@ const Home = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden gradient-hero min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden gradient-hero min-h-screen flex items-center">
+        <div className="absolute inset-0">
+          <img
+            src={heroHostelImage}
+            alt="Modern student hostel exterior"
+            className="h-full w-full object-cover hero-bg-image"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/75 via-primary/65 to-accent/60" />
         <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')]"></div>
+        <div className="hero-blob hero-blob-1" />
+        <div className="hero-blob hero-blob-2" />
+        <div className="hero-blob hero-blob-3" />
         
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 animate-fade-in">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
               Find Your Perfect Student Home
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-2xl text-white/90 max-w-2xl mx-auto leading-tight">
               Discover comfortable, affordable hostels near your campus
             </p>
 
             {/* Search Bar */}
-            <div className="max-w-3xl mx-auto animate-scale-in">
-              <div className="bg-white rounded-2xl shadow-2xl p-3 flex flex-col sm:flex-row gap-3">
+            <div className="w-full max-w-md sm:max-w-3xl mx-auto animate-scale-in">
+              <div className="hero-glass-card rounded-2xl p-2 sm:p-3 flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <div className="flex-1 flex items-center gap-3 px-4 bg-background/5 rounded-xl">
                   <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                   <Input
                     placeholder="Enter location..."
-                    className="border-0 focus-visible:ring-0 text-base bg-transparent"
+                    className="border-0 focus-visible:ring-0 text-sm sm:text-base bg-transparent"
                     value={searchLocation}
                     onChange={(e) => setSearchLocation(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -210,7 +222,7 @@ const Home = () => {
                 <Button 
                   size="lg" 
                   onClick={handleSearch}
-                  className="rounded-xl px-8 text-base font-semibold hover-scale"
+                  className="w-full sm:w-auto rounded-xl px-6 sm:px-8 text-sm sm:text-base font-semibold hover-scale"
                 >
                   <Search className="h-5 w-5" />
                   Search

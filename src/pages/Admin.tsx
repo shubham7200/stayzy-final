@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
-import { CheckCircle, XCircle, Trash2, Loader2, Upload, X, Edit, Bed, Bell, User, Phone, Home, Building2, IndianRupee, Calendar, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Loader2, Upload, X, Edit, Bed, Bell, User, Phone, Home, Building2, IndianRupee, Calendar, Eye, LocateFixed } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,8 @@ const Admin = () => {
     available_rooms: "",
     description: "",
     hostel_type: "boys" as "boys" | "girls" | "co-ed",
+    latitude: "",
+    longitude: "",
     owner_email: "",
     owner_password: "",
     owner_name: "",
@@ -94,6 +96,7 @@ const Admin = () => {
   });
   const [newHostelImages, setNewHostelImages] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [fetchingLocation, setFetchingLocation] = useState(false);
   const [editingHostel, setEditingHostel] = useState<Hostel | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -454,6 +457,8 @@ const Admin = () => {
           available_rooms: parseInt(newHostelForm.available_rooms),
           description: newHostelForm.description,
           hostel_type: newHostelForm.hostel_type,
+          latitude: newHostelForm.latitude ? parseFloat(newHostelForm.latitude) : null,
+          longitude: newHostelForm.longitude ? parseFloat(newHostelForm.longitude) : null,
           owner_id: ownerData.user_id,
           approved: false,
         })
@@ -515,6 +520,8 @@ const Admin = () => {
         available_rooms: "",
         description: "",
         hostel_type: "boys",
+        latitude: "",
+        longitude: "",
         owner_email: "",
         owner_password: "",
         owner_name: "",
@@ -856,6 +863,72 @@ const Admin = () => {
                     value={newHostelForm.description}
                     onChange={(e) => setNewHostelForm({ ...newHostelForm, description: e.target.value })}
                   />
+                </div>
+
+                {/* Location Fields */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label>Hostel Location (GPS)</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={fetchingLocation}
+                      onClick={() => {
+                        if (!navigator.geolocation) {
+                          toast({ title: "Error", description: "Geolocation is not supported by your browser", variant: "destructive" });
+                          return;
+                        }
+                        setFetchingLocation(true);
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            setNewHostelForm((prev) => ({
+                              ...prev,
+                              latitude: position.coords.latitude.toFixed(6),
+                              longitude: position.coords.longitude.toFixed(6),
+                            }));
+                            setFetchingLocation(false);
+                            toast({ title: "Location captured", description: "Latitude and longitude have been auto-filled." });
+                          },
+                          () => {
+                            setFetchingLocation(false);
+                            toast({ title: "Location access denied", description: "Please enter coordinates manually.", variant: "destructive" });
+                          },
+                          { enableHighAccuracy: true, timeout: 10000 }
+                        );
+                      }}
+                    >
+                      {fetchingLocation ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <LocateFixed className="h-4 w-4 mr-1" />}
+                      Use Current Location
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="latitude">Latitude</Label>
+                      <Input
+                        id="latitude"
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 17.385044"
+                        value={newHostelForm.latitude}
+                        onChange={(e) => setNewHostelForm({ ...newHostelForm, latitude: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="longitude">Longitude</Label>
+                      <Input
+                        id="longitude"
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 78.486671"
+                        value={newHostelForm.longitude}
+                        onChange={(e) => setNewHostelForm({ ...newHostelForm, longitude: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Used for Google Maps directions. You can enter manually or use the button above.
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="type">Hostel Type</Label>

@@ -170,6 +170,54 @@ All colors MUST be HSL.
     @apply transition-smooth hover:scale-105;
   }
 
+  .hero-bg-image {
+    animation: hero-zoom-pan 24s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+
+  .hero-glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: hsl(0 0% 100% / 0.82);
+    border: 1px solid hsl(0 0% 100% / 0.45);
+    box-shadow: 0 20px 50px hsl(240 35% 25% / 0.25);
+  }
+
+  .hero-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(8px);
+    opacity: 0.28;
+    will-change: transform;
+  }
+
+  .hero-blob-1 {
+    width: 14rem;
+    height: 14rem;
+    top: 18%;
+    left: -2rem;
+    background: radial-gradient(circle at 30% 30%, hsl(220 95% 80%), hsl(240 85% 65%) 70%);
+    animation: float-orb 12s ease-in-out infinite;
+  }
+
+  .hero-blob-2 {
+    width: 18rem;
+    height: 18rem;
+    bottom: 10%;
+    right: -4rem;
+    background: radial-gradient(circle at 40% 40%, hsl(270 92% 82%), hsl(250 80% 67%) 70%);
+    animation: float-orb 15s ease-in-out infinite reverse;
+  }
+
+  .hero-blob-3 {
+    width: 9rem;
+    height: 9rem;
+    top: 52%;
+    left: 60%;
+    background: radial-gradient(circle at 30% 30%, hsl(205 90% 82%), hsl(235 80% 70%) 70%);
+    animation: float-orb 10s ease-in-out infinite;
+  }
+
   .buddy-float {
     animation: buddy-float 3s ease-in-out infinite;
   }
@@ -182,6 +230,33 @@ All colors MUST be HSL.
 
   .buddy-glow:hover {
     box-shadow: 0 0 16px 6px hsl(243 75% 59% / 0.6), 0 0 36px 12px hsl(260 60% 65% / 0.4), 0 0 56px 20px hsl(243 75% 59% / 0.18);
+  }
+}
+
+@keyframes hero-zoom-pan {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(0, -1.2%, 0);
+  }
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-image,
+  .hero-blob-1,
+  .hero-blob-2,
+  .hero-blob-3 {
+    animation: none;
   }
 }
 
