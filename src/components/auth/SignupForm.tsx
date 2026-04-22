@@ -55,7 +55,7 @@ const SignupForm = ({ userType, onSignupSuccess, disabled }: SignupFormProps) =>
         password: formData.password,
         options: {
           data: metadata,
-          emailRedirectTo: "https://stayzy-woad.vercel.app/verified",
+          emailRedirectTo: `${window.location.origin}/verified`,
         },
       });
 
@@ -70,10 +70,16 @@ const SignupForm = ({ userType, onSignupSuccess, disabled }: SignupFormProps) =>
       setTimeout(() => {
         onSignupSuccess();
       }, 1500);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "Unable to create account";
       toast({
         title: "Signup failed",
-        description: error.message || "Unable to create account",
+        description: message,
         variant: "destructive",
       });
     } finally {

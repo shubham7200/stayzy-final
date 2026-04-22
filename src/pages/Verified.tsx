@@ -45,6 +45,12 @@ const Verified = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (status !== "success") return;
+    const timer = setTimeout(() => navigate("/auth"), 2500);
+    return () => clearTimeout(timer);
+  }, [status, navigate]);
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 shadow-lifted text-center space-y-6">
@@ -60,7 +66,7 @@ const Verified = () => {
           <>
             <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto" />
             <h1 className="text-2xl font-bold text-foreground">Email Verified Successfully</h1>
-            <p className="text-muted-foreground">Your account is now active. You can now login.</p>
+            <p className="text-muted-foreground">Your account is now active</p>
             <Button variant="hero" size="lg" className="w-full" onClick={() => navigate("/auth")}>
               Go to Login
             </Button>
