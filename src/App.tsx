@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +21,10 @@ import BuddyChatbot from "./components/BuddyChatbot";
 import SplashScreen from "./components/SplashScreen";
 
 const queryClient = new QueryClient();
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -52,6 +56,18 @@ const AppRoutes = () => {
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
   const handleSplashComplete = useCallback(() => setShowSplash(false), []);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event: Event) => {
+      const promptEvent = event as InstallPromptEvent;
+      promptEvent.preventDefault();
+      (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt = promptEvent;
+      console.log("[Stayzy] beforeinstallprompt event captured");
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  }, []);
 
   return (
     <>

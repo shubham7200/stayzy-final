@@ -5,7 +5,7 @@ import HostelCard from "@/components/HostelCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Clock, Mail, Phone } from "lucide-react";
+import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Clock, Mail, Phone, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import heroHostelImage from "@/assets/hero-hostel.jpg";
@@ -23,9 +23,16 @@ interface Hostel {
   lowestRentPerBed?: number | null;
 }
 
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState("");
+  const [canInstall, setCanInstall] = useState(false);
+  const [installing, setInstalling] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [featuredHostels, setFeaturedHostels] = useState<Hostel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +48,44 @@ const Home = () => {
     loadStats();
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const promptEvent = (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt;
+    setCanInstall(!!promptEvent);
+
+    const handleBeforeInstallPrompt = () => setCanInstall(true);
+    const handleAppInstalled = () => {
+      setCanInstall(false);
+      (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt = undefined;
+      toast.success("Stayzy installed successfully");
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallApp = async () => {
+    const promptEvent = (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt;
+    if (!promptEvent || installing) return;
+
+    setInstalling(true);
+    try {
+      await promptEvent.prompt();
+      const choice = await promptEvent.userChoice;
+      if (choice.outcome === "accepted") {
+        setCanInstall(false);
+      }
+      (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt = undefined;
+    } catch (error) {
+      console.error("[Stayzy] Install prompt failed:", error);
+    } finally {
+      setInstalling(false);
+    }
+  };
 
   const loadStats = async () => {
     try {
@@ -158,20 +203,20 @@ const Home = () => {
 
   const testimonials = [
     {
-      name: "Priya Sharma",
+      name: "Vishal Chavan",
       role: "Engineering Student",
       content: "Found my perfect hostel in just 2 days! The verified listings and honest reviews made the decision so easy.",
       rating: 5,
     },
     {
-      name: "Rahul Kumar",
-      role: "MBA Student",
+      name: "Harshad Shelke",
+      role: "Engineering Student",
       content: "The filter options are incredibly detailed. I could find exactly what I needed within my budget.",
       rating: 5,
     },
     {
-      name: "Ananya Desai",
-      role: "Medical Student",
+      name: "Krishna Sude",
+      role: "Diploma Student",
       content: "Safe, verified hostels with real student reviews. Stayzy made my relocation stress-free!",
       rating: 5,
     },
@@ -229,6 +274,20 @@ const Home = () => {
                 </Button>
               </div>
             </div>
+
+            {canInstall && (
+              <div className="flex justify-center">
+                <Button
+                  variant="secondary"
+                  onClick={handleInstallApp}
+                  disabled={installing}
+                  className="bg-white/90 text-primary hover:bg-white font-semibold shadow-soft"
+                >
+                  <Download className="h-4 w-4" />
+                  {installing ? "Preparing install..." : "Install Stayzy App"}
+                </Button>
+              </div>
+            )}
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 text-sm">
