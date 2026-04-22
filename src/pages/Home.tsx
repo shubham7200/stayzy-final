@@ -5,10 +5,11 @@ import HostelCard from "@/components/HostelCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Clock, Mail, Phone, Download } from "lucide-react";
+import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Clock, Mail, Phone, Download, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import heroHostelImage from "@/assets/hero-hostel.jpg";
+import stayzyLogo from "@/assets/buddy-icon.png";
 
 interface Hostel {
   id: string;
@@ -28,10 +29,14 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
+const INSTALL_POPUP_HIDE_KEY = "stayzy_install_popup_hidden_until";
+const INSTALL_POPUP_HIDE_MS = 1000 * 60 * 60 * 24;
+
 const Home = () => {
   const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState("");
-  const [canInstall, setCanInstall] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(null);
+  const [installPopupVisible, setInstallPopupVisible] = useState(false);
   const [installing, setInstalling] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [featuredHostels, setFeaturedHostels] = useState<Hostel[]>([]);
@@ -50,12 +55,31 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const promptEvent = (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt;
-    setCanInstall(!!promptEvent);
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (isStandalone) return;
 
-    const handleBeforeInstallPrompt = () => setCanInstall(true);
+    const hiddenUntilRaw = localStorage.getItem(INSTALL_POPUP_HIDE_KEY);
+    const hiddenUntil = hiddenUntilRaw ? Number(hiddenUntilRaw) : 0;
+    const canShowByTime = !Number.isFinite(hiddenUntil) || Date.now() > hiddenUntil;
+
+    const storedPrompt = (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt;
+    if (storedPrompt) {
+      setDeferredPrompt(storedPrompt);
+      setInstallPopupVisible(canShowByTime);
+    }
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      const promptEvent = event as InstallPromptEvent;
+      promptEvent.preventDefault();
+      setDeferredPrompt(promptEvent);
+      setInstallPopupVisible(canShowByTime);
+    };
+
     const handleAppInstalled = () => {
-      setCanInstall(false);
+      setDeferredPrompt(null);
+      setInstallPopupVisible(false);
       (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt = undefined;
       toast.success("Stayzy installed successfully");
     };
@@ -68,17 +92,20 @@ const Home = () => {
     };
   }, []);
 
+  const hideInstallPopupForNow = () => {
+    localStorage.setItem(INSTALL_POPUP_HIDE_KEY, String(Date.now() + INSTALL_POPUP_HIDE_MS));
+    setInstallPopupVisible(false);
+  };
+
   const handleInstallApp = async () => {
-    const promptEvent = (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt;
-    if (!promptEvent || installing) return;
+    if (!deferredPrompt || installing) return;
 
     setInstalling(true);
     try {
-      await promptEvent.prompt();
-      const choice = await promptEvent.userChoice;
-      if (choice.outcome === "accepted") {
-        setCanInstall(false);
-      }
+      await deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      hideInstallPopupForNow();
+      setDeferredPrompt(null);
       (window as Window & { deferredInstallPrompt?: InstallPromptEvent }).deferredInstallPrompt = undefined;
     } catch (error) {
       console.error("[Stayzy] Install prompt failed:", error);
@@ -274,20 +301,6 @@ const Home = () => {
                 </Button>
               </div>
             </div>
-
-            {canInstall && (
-              <div className="flex justify-center">
-                <Button
-                  variant="secondary"
-                  onClick={handleInstallApp}
-                  disabled={installing}
-                  className="bg-white/90 text-primary hover:bg-white font-semibold shadow-soft"
-                >
-                  <Download className="h-4 w-4" />
-                  {installing ? "Preparing install..." : "Install Stayzy App"}
-                </Button>
-              </div>
-            )}
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 text-sm">
@@ -536,6 +549,56 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {deferredPrompt && installPopupVisible && (
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[9997] animate-fade-in">
+          <div className="rounded-2xl border border-border bg-background/95 backdrop-blur-md shadow-2xl p-4">
+            <button
+              type="button"
+              onClick={hideInstallPopupForNow}
+              className="absolute top-3 right-3 rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Close install popup"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-start gap-3 pr-6">
+              <img
+                src={stayzyLogo}
+                alt="Stayzy logo"
+                className="h-10 w-10 rounded-xl object-contain bg-white p-1 shadow-soft"
+              />
+              <div className="min-w-0">
+                <h3 className="text-sm font-semibold text-foreground">Install Stayzy App</h3>
+                <p className="text-xs text-muted-foreground">
+                  Get faster access and app-like experience
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={hideInstallPopupForNow}
+                className="text-muted-foreground"
+              >
+                Later
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleInstallApp}
+                disabled={installing}
+              >
+                <Download className="h-4 w-4" />
+                {installing ? "Installing..." : "Install"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
