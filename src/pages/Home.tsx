@@ -9,7 +9,6 @@ import { Search, MapPin, Shield, Star, Users, CheckCircle, TrendingUp, Award, Cl
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import heroHostelImage from "@/assets/hero-hostel.jpg";
-import stayzyLogo from "@/assets/buddy-icon.png";
 
 interface Hostel {
   id: string;
@@ -551,7 +550,7 @@ const Home = () => {
       </footer>
 
       {deferredPrompt && installPopupVisible && (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[9997] animate-fade-in">
+        <div className="fixed top-20 right-4 left-4 sm:left-auto sm:right-6 sm:top-24 sm:max-w-md z-[9997] animate-fade-in">
           <div className="rounded-2xl border border-border bg-background/95 backdrop-blur-md shadow-2xl p-4">
             <button
               type="button"
@@ -564,7 +563,7 @@ const Home = () => {
 
             <div className="flex items-start gap-3 pr-6">
               <img
-                src={stayzyLogo}
+                src="/assets/stayzy-logo.jpg"
                 alt="Stayzy logo"
                 className="h-10 w-10 rounded-xl object-contain bg-white p-1 shadow-soft"
               />
