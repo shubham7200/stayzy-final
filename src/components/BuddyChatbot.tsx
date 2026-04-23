@@ -297,12 +297,12 @@ const BuddyChatbot = () => {
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Ask about hostels..."
                 disabled={isLoading}
-                className="flex-1 bg-muted/50 border-0 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+                className="flex-1 min-w-0 bg-muted/50 border-0 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
               />
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="bg-primary text-primary-foreground rounded-lg p-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="shrink-0 bg-primary text-primary-foreground rounded-lg p-2 hover:opacity-90 transition-opacity disabled:opacity-50"
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />
