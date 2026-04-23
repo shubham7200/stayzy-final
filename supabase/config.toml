@@ -1,0 +1,7 @@
+project_id = "lfnzfencdkkgzaibqutm"
+
+[functions.create-owner-account]
+verify_jwt = false
+
+[functions.buddy-chat]
+verify_jwt = false

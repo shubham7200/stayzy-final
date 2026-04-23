@@ -1,0 +1,271 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 230 15% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 15% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 15% 20%;
+
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 260 60% 65%;
+
+    --secondary: 220 15% 95%;
+    --secondary-foreground: 230 15% 20%;
+
+    --muted: 220 15% 95%;
+    --muted-foreground: 230 10% 50%;
+
+    --accent: 243 75% 59%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 260 60% 65%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 248 60% 52%;
+
+    --radius: 0.75rem;
+
+    --gradient-hero: linear-gradient(135deg, hsl(220 85% 60%), hsl(260 60% 65%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 20% 99%));
+    --gradient-accent: linear-gradient(135deg, hsl(243 75% 59%), hsl(260 60% 65%));
+    
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.08);
+    --shadow-lg: 0 10px 30px -10px rgb(0 0 0 / 0.12);
+    --shadow-glow: 0 0 40px hsl(248 70% 68% / 0.3);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 230 20% 12%;
+    --foreground: 220 15% 95%;
+
+    --card: 230 18% 15%;
+    --card-foreground: 220 15% 95%;
+
+    --popover: 230 18% 15%;
+    --popover-foreground: 220 15% 95%;
+
+    --primary: 243 75% 64%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 260 60% 70%;
+
+    --secondary: 230 15% 20%;
+    --secondary-foreground: 220 15% 95%;
+
+    --muted: 230 15% 20%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 243 75% 64%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 260 60% 70%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 230 15% 22%;
+    --input: 230 15% 22%;
+    --ring: 248 60% 58%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(220 85% 55%), hsl(260 60% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(230 18% 15%), hsl(230 20% 13%));
+    --gradient-accent: linear-gradient(135deg, hsl(243 75% 59%), hsl(260 60% 65%));
+    
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 10px 30px -10px rgb(0 0 0 / 0.5);
+    --shadow-glow: 0 0 40px hsl(248 70% 62% / 0.4);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-lifted {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-glow-primary {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift {
+    @apply transition-smooth hover:-translate-y-1 hover:shadow-lifted;
+  }
+
+  .hover-scale {
+    @apply transition-smooth hover:scale-105;
+  }
+
+  .hero-bg-image {
+    animation: hero-zoom-pan 24s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+
+  .hero-glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: hsl(0 0% 100% / 0.82);
+    border: 1px solid hsl(0 0% 100% / 0.45);
+    box-shadow: 0 20px 50px hsl(240 35% 25% / 0.25);
+  }
+
+  .hero-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(8px);
+    opacity: 0.28;
+    will-change: transform;
+  }
+
+  .hero-blob-1 {
+    width: 14rem;
+    height: 14rem;
+    top: 18%;
+    left: -2rem;
+    background: radial-gradient(circle at 30% 30%, hsl(220 95% 80%), hsl(240 85% 65%) 70%);
+    animation: float-orb 12s ease-in-out infinite;
+  }
+
+  .hero-blob-2 {
+    width: 18rem;
+    height: 18rem;
+    bottom: 10%;
+    right: -4rem;
+    background: radial-gradient(circle at 40% 40%, hsl(270 92% 82%), hsl(250 80% 67%) 70%);
+    animation: float-orb 15s ease-in-out infinite reverse;
+  }
+
+  .hero-blob-3 {
+    width: 9rem;
+    height: 9rem;
+    top: 52%;
+    left: 60%;
+    background: radial-gradient(circle at 30% 30%, hsl(205 90% 82%), hsl(235 80% 70%) 70%);
+    animation: float-orb 10s ease-in-out infinite;
+  }
+
+  .buddy-float {
+    animation: buddy-float 3s ease-in-out infinite;
+  }
+
+  .buddy-glow {
+    box-shadow: 0 0 12px 4px hsl(243 75% 59% / 0.45), 0 0 28px 8px hsl(260 60% 65% / 0.25), 0 0 48px 16px hsl(243 75% 59% / 0.12);
+    animation: buddy-glow-pulse 2.8s ease-in-out infinite;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .buddy-glow:hover {
+    box-shadow: 0 0 16px 6px hsl(243 75% 59% / 0.6), 0 0 36px 12px hsl(260 60% 65% / 0.4), 0 0 56px 20px hsl(243 75% 59% / 0.18);
+  }
+}
+
+@keyframes hero-zoom-pan {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(0, -1.2%, 0);
+  }
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-image,
+  .hero-blob-1,
+  .hero-blob-2,
+  .hero-blob-3 {
+    animation: none;
+  }
+}
+
+@keyframes buddy-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes buddy-glow-pulse {
+  0%, 100% { box-shadow: 0 0 12px 4px hsl(243 75% 59% / 0.45), 0 0 28px 8px hsl(260 60% 65% / 0.25), 0 0 48px 16px hsl(243 75% 59% / 0.12); }
+  50% { box-shadow: 0 0 18px 6px hsl(243 75% 59% / 0.6), 0 0 36px 12px hsl(260 60% 65% / 0.35), 0 0 56px 20px hsl(243 75% 59% / 0.18); }
+}
